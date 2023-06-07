@@ -7,6 +7,7 @@ In this projects a user can :
 
 a admin can:
 - responsible for adding any product to the store, updating the items, removing the item from the store as well as managing the
+the projects include is mailing the customers, so once a user registers to the website, they will recieve a mail for the successful registration to the website
  
 # Usage
 - Run npm install to installl dependencies
