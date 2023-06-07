@@ -10,6 +10,6 @@ a admin can:
  
 # Usage
 - Run npm install to installl dependencies
-- Run ( npm start )to start the local server
+- Run npm start to start the local server
 - Load http://localhost:3000 to test the endpoin
 -  postman url for testing https://www.postman.com/telecoms-specialist-16112359/workspace/online-store-site/
