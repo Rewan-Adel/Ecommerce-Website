@@ -1,5 +1,4 @@
 # online-store-site
-# About
 In this projects a user can :
 - visit the websites, registers and login to the website. 
 - They can check all the products available for shopping
