@@ -1,0 +1,26 @@
+{
+  "name": "store",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "start": "nodemon server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ajv": "^8.12.0",
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "config": "^3.3.9",
+    "express": "^4.18.2",
+    "helmet": "^7.0.0",
+    "jet": "^0.8.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.2.2",
+    "nodemon": "^2.0.22",
+    "validator": "^13.9.0"
+  }
+}
