@@ -1,4 +1,5 @@
 # online-store-site
+you can visit the website from here: https://ecommerce-client-rho.vercel.app/
 In this project a user can :
 - visit the websites, registers and login to the website. 
 - They can check all the products available for shopping
