@@ -1,13 +1,14 @@
 # online-store-site
-In this projects a user can :
+In this project a user can :
 - visit the websites, registers and login to the website. 
 - They can check all the products available for shopping
 - filter and search item 
 
 a admin can:
 - responsible for adding any product to the store, updating the items, removing the item from the store as well as managing the
+- delete user, get all users and update user into admin 
 
-the projects include is mailing the customers, so once a user registers to the website, they will recieve a mail for the successful registration to the website
+the project include is mailing the customers, so once a user registers to the website, they will recieve a mail for the successful registration to the website
  
 # Usage
 - Run npm install to installl dependencies
