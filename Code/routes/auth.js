@@ -32,13 +32,13 @@ router.post("/", validator, async (req, res) => {
     return res.json({
       message: "Logged in successfully",
       firstName: user.firstName,
-      lasrName: user.lastName,
+      lastName: user.lastName,
       email: user.email,
       street: user.street,
       city: user.city,
       id: user._id,
       isAdmin: user.isAdmin,
-      token: token,
+      // token: token,
     });
   } catch (err) {
     console.log(err);

@@ -5,18 +5,20 @@ const validator = require("validator");
 
 const getAll = async (req, res) => {
   try {
-    let user = await User.find().select({
+    let users = await User.find().select({
       firstName: 1,
       lastName: 1,
       email: 1,
+      isAdmin: 1,
     });
-    return res.json({ user });
+    return res.status(200).json(users);
   } catch (err) {
     console.log(err);
   }
 };
 
 const addNew = async (req, res) => {
+  console.log(req.body);
   try {
     if (!validator.isEmail(req.body.email)) {
       return res.status(400).json({
@@ -41,6 +43,7 @@ const addNew = async (req, res) => {
       password: HashedPass,
       street: req.body.street,
       city: req.body.city,
+      isAdmin: req.body.isAdmin,
     });
     await user.save();
     if (!config.get("jwtsec")) {
@@ -108,31 +111,47 @@ const DeleteOne = async (req, res) => {
 };
 
 const updateOne = async (req, res) => {
+  console.log(req.body);
+
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    user.firstName = req.body.firstName || user.firstName;
+    user.lastName = req.body.lastName || user.lastName;
+    user.email = req.body.email || user.email;
+    user.street = req.body.street || user.street;
+    user.city = req.body.city || user.city;
+  } else {
+    return res
+      .status(400)
+      .json({ message: "User Not Found!", "status code": 400 });
+  }
+
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body);
-    if (!user) {
-      return res
-        .status(400)
-        .json({ message: "User Not Found!", "status code": 400 });
-    }
-    if (!config.get("jwtsec")) {
-      console.log("jwt is denied");
-      return res.status(500).json({ message: "Internal server error!" });
-    }
-    const token = await user.AuthToken();
-    res.header("x-auth-token", token);
+    const updatedUser = await user.save();
+    // if (!user) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "User Not Found!", "status code": 400 });
+    // }
+    // if (!config.get("jwtsec")) {
+    //   console.log("jwt is denied");
+    //   return res.status(500).json({ message: "Internal server error!" });
+    // }
+    // const token = await user.AuthToken();
+    // res.header("x-auth-token", token);
     return res.json({
       message: `user is updated`,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      street: user.street,
-      city: user.city,
-      id: user._id,
-      token: token,
-      isAdmin: user.isAdmin,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      email: updatedUser.email,
+      street: updatedUser.street,
+      city: updatedUser.city,
+      id: updatedUser._id,
+      // token: token,
+      isAdmin: updatedUser.isAdmin,
+      createdAt: updatedUser.createdAt,
+      updatedAt: updatedUser.updatedAt,
     });
   } catch (err) {
     console.log(err);
@@ -140,8 +159,8 @@ const updateOne = async (req, res) => {
 };
 const stats = async (req, res) => {
   try {
-    const date = await new Date();
-    const lastYear = await date.getFullYear(date.getFullYea() - 1);
+    const date = new Date();
+    const lastYear = date.getFullYear(date.getFullYea() - 1);
     const data = await User.aggregate([
       { $match: { createdAt: { $gte: lastYear } } },
       {
