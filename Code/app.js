@@ -9,6 +9,7 @@ const categoriesRouter = require("./routes/category");
 const brandsRouter = require("./routes/brand");
 const cors = require("cors");
 require("dotenv").config();
+const bodyParser = require("body-parser");
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -23,6 +24,10 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
