@@ -18,7 +18,6 @@ const getAll = async (req, res) => {
 };
 
 const addNew = async (req, res) => {
-  console.log(req.body);
   try {
     if (!validator.isEmail(req.body.email)) {
       return res.status(400).json({
