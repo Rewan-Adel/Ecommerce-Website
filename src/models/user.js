@@ -25,7 +25,6 @@ userSchema.methods.AuthToken = function(res){
         userID    : this._id,
         adminRole : this.isAdmin
     }, process.env.JWTSEC, {expiresIn: '7d'})
-    config('jwtsecvar')
     res.cookie('jwt', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV !== 'development',
