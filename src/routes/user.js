@@ -9,6 +9,7 @@ router.post("/register", regValidator, controller.register)
 router.post("/auth", authValidator, controller.auth)
 router.post("/logout",controller.logout)
 
+router.get("/search/:key",  verfiyAdminToken, controller.search)
 router.get("/", verfiyAdminToken,  controller.getAll)
 router.get("/:id",   controller.getOne)
 router.patch("/:id", controller.updateOne)
