@@ -136,7 +136,7 @@ const updateOne = async(req, res)=>{
         }
         return res.json({
             "message": `user is updated`,
-            "fristName": user.fristName,
+            "firstName": user.firstName,
             "lastName": user.lastName,
             "email": user.email,
             "street": user.street,
@@ -147,9 +147,32 @@ const updateOne = async(req, res)=>{
             "createdAt": user.createdAt,
             "updatedAt": user.updatedAt
         })
-}catch(err){console.log(err)}
-
+}catch(err){
+    console.log(err)
+    res.status(500).json({"message": "Internal Server Error !"})
+}
 }
 
-
-module.exports = {register, getAll, getOne, DeleteOne, updateOne , logout, auth}
+const search = async(req, res)=>{
+    try{
+        let data = await User.find({
+            "$or": [
+                {firstName:  { $regex : req.params.key}},
+                {lastName:  { $regex : req.params.key}},
+                {email:  { $regex : req.params.key}},
+            ]
+        });
+        if(data.length > 0 ) res.json(data)
+        res.status(400).json({
+                "message": "user not found !",
+                "status code": 400
+            })
+            
+            
+    }
+    catch(err){
+        console.log(err)
+        res.status(500).json({"message": "Internal Server Error !"})
+    }
+}
+module.exports = {register, getAll, getOne, DeleteOne, updateOne , logout, auth, search }
