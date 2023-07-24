@@ -11,7 +11,7 @@ const addProduct = async(req, res)=>{
                 "status code": 400
             })
         }
-        
+        if(req.file){
         const result = await cloudinary.uploader.upload(req.file.path, {
             folder: 'online store'})
         product = new Product({
@@ -32,6 +32,24 @@ const addProduct = async(req, res)=>{
         "avatar": product.avatar,
         "createdAt": product.createdAt,
         "updatedAt": product.updatedAt
+    })
+}
+        product = new Product({
+        name        : req.body.name,
+        description : req.body.description,
+        category    : req.body.category,
+        price       : req.body.price,
+    })
+    await product.save()
+    return res.status(200).json({
+    "message": "Product is added",
+    "id": product._id,
+    "name": product.name,
+    "description": product.description,
+    "category": product.category,
+    "price": product.price,
+    "createdAt": product.createdAt,
+    "updatedAt": product.updatedAt
     })
 }
     catch(err){
