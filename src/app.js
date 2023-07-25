@@ -9,7 +9,9 @@ const adminRouter = require('./routes/adminUpdate')
 const productsRouter = require('./routes/product')
 const cartRouter = require('./routes/cart')
 const orderRouter = require('./routes/order')
+const searchRouter = require('./routes/search')
 const payRouter = require('./routes/payment')
+
 require('dotenv').config();
 mongoose.connect(process.env.MONGO_URL)
 .then(console.log("Connected..."))
@@ -24,5 +26,6 @@ app.use("/api/admin_update", adminRouter)
 app.use("/api/cart", cartRouter)
 app.use("/api/order", orderRouter)
 app.use("/api/product", productsRouter)
+app.use("/api/search", searchRouter)
 app.use("/api/pay", payRouter)
 module.exports = app;
