@@ -150,10 +150,35 @@ const deleteProduct = async(req, res)=>{
         })
     }
 }
+// @desc create new review  
+// @route POST api/product/:id/review
+const createProductReview = async(req, res)=>{
+    const {rating , comment} = req.body;
+    try{
+        if (isNaN(rating) || rating < 1 || rating > 5) {
+            return res.status(400).json({ "message": 'Rating should be between 1 and 5.' });
+          }
+        const product = await  Product.findById(req.params.id)
+        if(product){
+            product.rating = rating ;
+            product.comment = comment ;
+            
+            await product.save()
+            console.log(req.body)
+           return res.json({"message": "rating added"})
+        }else{
+            res.status(404).json({"message": "product not found"})
+    }}
+    catch(err){
+        console.log(err)
+        res.status(500).json({"message": "Internal Server Error!"})
+    }
+}
 module.exports = {
     addProduct, 
     deleteProduct,
-     get_all_products, 
-     get_product_ById,
-      update_product_ById,
+    get_all_products, 
+    get_product_ById,
+    update_product_ById,
+    createProductReview 
     }
