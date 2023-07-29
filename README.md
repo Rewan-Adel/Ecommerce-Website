@@ -15,7 +15,7 @@ the project include is mailing the customers, so once a user registers to the we
 # Usage
 - Run npm install to installl dependencies
 - Run npm start to start the local server
-- Load http://localhost:3000 to test the endpoin
+- Load http://localhost:8000 to test the endpoin
 -  postman url for testing https://www.postman.com/telecoms-specialist-16112359/workspace/online-store-site/
 
 # Languages & tools

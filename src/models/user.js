@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const config = require("config");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const userSchema = new mongoose.Schema(
   {
@@ -22,15 +22,22 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-userSchema.methods.AuthToken = function () {
-  const token = jwt.sign(
+userSchema.methods.AuthToken = function (res) {
+  let token = jwt.sign(
     {
       userID: this._id,
       adminRole: this.isAdmin,
     },
-    config.get("jwtsec"),
-    { expiresIn: "3d" }
+    process.env.JWTSEC,
+    { expiresIn: "7d" }
   );
+  res.cookie("jwt", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV !== "development",
+    sameSite: "strict",
+    maxAge: 7 * 60 * 60 * 1000,
+  });
+
   return token;
 };
 

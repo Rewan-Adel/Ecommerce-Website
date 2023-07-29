@@ -7,11 +7,4 @@ cloudinary.config({
   api_secret: process.env.CLOUD_KEY_SECRET,
 });
 
-// cloudinary.config({
-//   cloud_name: "dmua4axn3",
-//   api_key: "218658178575793",
-//   api_secret: "Hkt1AUnBiaG0NYrXssvVCYf1AgU",
-//   //   secure: true,
-// });
-
 module.exports = { cloudinary };
