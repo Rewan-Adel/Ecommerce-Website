@@ -21,7 +21,9 @@ router.patch("/:id", async(req, res)=>{
             "adminRole":true,
             "id": user.id,})
     }
-    catch(err){console.log(err)}
-})
+  catch (err) {
+    console.log(err);
+  }
+});
 
-module.exports = router
+module.exports = router;
