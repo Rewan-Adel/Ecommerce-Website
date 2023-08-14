@@ -1,5 +1,5 @@
-const express = require('express')
-const app = express()
+const express = require("express");
+const app = express();
 const cookieParser = require('cookie-parser')
 const bodyParser = require("body-parser");
 const mongoose = require('mongoose')
@@ -13,7 +13,7 @@ const searchRouter = require('./routes/search')
 const payRouter = require('./routes/payment')
 
 require('dotenv').config();
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URI)
 .then(console.log("Connected..."))
 .catch((err)=>{console.log(err)})
 
@@ -26,6 +26,5 @@ app.use("/api/admin_update", adminRouter)
 app.use("/api/cart", cartRouter)
 app.use("/api/order", orderRouter)
 app.use("/api/product", productsRouter)
-app.use("/api/search", searchRouter)
 app.use("/api/pay", payRouter)
 module.exports = app;

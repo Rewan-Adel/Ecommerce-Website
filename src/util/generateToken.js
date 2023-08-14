@@ -1,7 +1,10 @@
 const jwt = require("jsonwebtoken");
 
-const generateToken = (res, userId) => {
-  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+module.exports  = (user, res)=>{
+  const token = jwt.sign({ 
+    userId : user._id,
+    Role : user.isAdmin },
+    process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
 
@@ -11,6 +14,7 @@ const generateToken = (res, userId) => {
     sameSite: "strict", // Prevent CSRF attacks
     maxAge: 7 * 24 * 60 * 60 * 1000, // 30 days
   });
+  return token;
 };
 
-module.exports = { generateToken };
+

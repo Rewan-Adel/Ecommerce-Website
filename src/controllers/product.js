@@ -1,99 +1,62 @@
-const Product = require("../models/product");
+const Product = require("../models/product").Product;
+const Review = require("../models/product").review;
 const { cloudinary } = require("../util/cloudinary");
 
+//@desc basic crud operation
 const addProduct = async (req, res) => {
-  const { name, description, price, image, category, brand, user, quantity } =
-    req.body;
+  const {name, category, brand, description, price, image,  countInStock } = req.body;
   try {
     let product = await Product.findOne({ name });
     if (product) {
       res.status(409).json({
         message: "Product already exists",
-        id: product._id,
-        name: product.name,
-        description: product.description,
-        category: product.category,
-        price: product.price,
+        product
       });
     }
+    
+    if(req.file){
+        const result = await cloudinary.uploader.upload(image, {
+         folder: "products",
+        });
 
-    const result = await cloudinary.uploader.upload(image, {
-      folder: "products",
+        product = new Product({
+          //userId: user,
+          name,
+          category,
+          brand,
+          description,
+          price,
+          countInStock,
+          image: result.secure_url,
     });
-
+    } 
+   else{
     product = new Product({
-      userId: user,
       name,
       description,
       category,
       brand,
       price,
-      quantity,
-      image: result.secure_url,
-    });
+      countInStock,
+});
+  }
     await product.save();
     res.status(200).json({
       message: "Product is added",
-      id: product._id,
-      user: product.user,
-      name: product.name,
-      description: product.description,
-      category: product.category,
-      price: product.price,
-      price: product.brand,
-      image: product.image,
-      quantity: product.quantity,
-      createdAt: product.createdAt,
+      product
     });
+
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Internal Server Error!",
-    });
-  }
-};
-const get_all_products = async (req, res) => {
-  try {
-    let products = await Product.find();
-    return res.status(200).json(products);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
       message: "Internal Server Error!",
     });
   }
 };
 
-const get_products_by_category = async (req, res) => {
-  try {
-    let products = await Product.find({ category: req.params.id });
-    return res.status(200).json(products);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      message: "Internal Server Error!",
-    });
-  }
-};
-const get_product_ById = async (req, res) => {
-  try {
-    let product = await Product.findById({ _id: req.params.id });
-    if (!product) {
-      return res.status(404).json({
-        message: "product is not found!",
-      });
-    }
-    return res.json(product);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      message: "Internal Server Error!",
-    });
-  }
-};
 const update_product_ById = async (req, res) => {
-  const { name, description, price, image, category, brand, user, quantity } =
-    req.body;
+  const { name, description, price, image, category, brand, user, countInStock } =
+  req.body;
   try {
     const product = await Product.findOne({ _id: req.params.id });
     if (!product) {
@@ -101,10 +64,11 @@ const update_product_ById = async (req, res) => {
         message: "product is not found!",
       });
     }
-
+    
     let updatedProduct;
-
-    if (image !== null) {
+    
+    // if (image !== null) {
+      if (req.file) {
       const result = await cloudinary.uploader.upload(image, {
         folder: "products",
       });
@@ -124,7 +88,7 @@ const update_product_ById = async (req, res) => {
         category,
         brand,
         price,
-        quantity,
+        countInStock,
       });
     }
 
@@ -136,10 +100,11 @@ const update_product_ById = async (req, res) => {
     });
   }
 };
+
 const deleteProduct = async (req, res) => {
   try {
     let result = await Product.deleteOne({ _id: req.params.id });
-
+    
     if (result.deletedCount === 1) {
       console.log("Successfully deleted one document.");
 
@@ -161,25 +126,165 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const get_all_products = async (req, res) => {
+  try {
+    let products = await Product.find();
+    return res.status(200).json(products);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: "Internal Server Error!",
+    });
+  }
+};
+
+const get_product_ById = async (req, res) => {
+  try {
+    let product = await Product.findById({ _id: req.params.id });
+    if (!product) {
+      return res.status(404).json({
+        message: "product is not found!",
+      });
+    }
+    return res.json(product);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Internal Server Error!",
+    });
+  }
+};
+// @desc Search 
+// @route POST api/product/search/:id
+const get_product_ByKey = async(req, res) =>{
+  try{
+  let data = await Product.find({
+    $or :[
+        { name     : { $regex : req.params.key}},
+        { category : { $regex : req.params.key }},
+        { brand    : { $regex : req.params.key }},
+  ]});
+  if( data.length > 0) {res.send(data)}
+  else{ 
+     return res.status(404).json({
+          "message": "item not found!",
+          "status code": 404})      
+      }
+}catch (err) {
+  console.log(err);
+  res.status(500).json({
+    message: "Internal Server Error!",
+  });
+}
+};
+
+const get_product_ByName = async(req, res)=>{
+  try{
+  let data = await Product.find({name:{ $regex : req.params.key}})
+  if( data.length > 0) {res.send(data)}
+  else{ 
+      res.status(400).json({
+          "message": "item not found!",
+          "status code": 400})      
+      }
+    }catch (err) {
+      console.log(err);
+      res.status(500).json({
+        message: "Internal Server Error!",
+      });
+   }
+};
+
+const get_product_ByCategory = async(req, res)=>{
+  try{
+      let data = await Product.find({category:{ $regex : req.params.key}})
+      if( data.length > 0) {res.send(data)}
+      return res.status(404).json({
+              "message": "item not found!",
+              "status code": 404});        
+}catch (err) {
+  console.log(err);
+  res.status(500).json({
+    message: "Internal Server Error!",
+  });
+}
+};
+
+const get_product_ByBrand =  async(req, res)=>{
+  try{
+  let data = await Product.find({brand:{ $regex : req.params.key}})
+  if( data.length > 0) {res.send(data)}
+  res.status(404).json({
+          "message": "item not found!",
+          "status code": 404})        
+  }catch (err) {
+          console.log(err);
+          res.status(500).json({
+            message: "Internal Server Error!",
+          });
+        }        
+};  
+
+const get_product_ByPrice = async(req, res)=>{
+  try{
+  let data = await Product.find({ price : {$lte : req.params.key} })
+  if( data.length > 0) {res.send(data)}
+  res.status(404).json({
+          "message": "item not found!",
+          "status code": 404})        
+      }catch(err){
+          console.log(err);
+          res.status(500).json({
+            message: "Internal Server Error!",
+          });
+        }
+};
+
+const get_product_ByRating = async(req, res)=>{
+  try{
+  let data = await Product.find({rating : {$gte : req.params.key} })
+  if( data.length > 0) {res.send(data)}
+  res.status(404).json({
+          "message": "item not found!",
+          "status code": 404}) 
+ }catch(err){
+          console.log(err);
+          res.status(500).json({
+            message: "Internal Server Error!",
+          });
+        }             
+}; 
+
 // @desc create new review
 // @route POST api/product/:id/review
 const createProductReview = async (req, res) => {
-  const { rating, comment } = req.body;
+  const {userId, rating, comment } = req.body;
   try {
-    if (isNaN(rating) || rating < 1 || rating > 5) {
-      return res
-        .status(400)
-        .json({ message: "Rating should be between 1 and 5." });
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ message: "Rating should be between 1 and 5." });
     }
-    const product = await Product.findById(req.params.id);
-    if (product) {
-      product.rating = rating;
-      product.comment = comment;
+    let product = await Product.findById(req.params.id);
+    if(product) {
+      let review = new Review({
+        product : req.params.id, 
+        user : userId,
+        rating,
+        comment 
+      })
+     review = await review.save()
+     if(review){
+        //Update the associated product with the new review
+        product.updateOne( 
+          {$push : {reviews : review._id}},
+          {new : true}
+        );
+    };    
 
-      await product.save();
-      console.log(req.body);
+    product =   .find().populate('reviews');
+     //console.log(product)
       return res.json({ message: "rating added" });
-    } else {
+    }
+    else {
       res.status(404).json({ message: "product not found" });
     }
   } catch (err) {
@@ -190,9 +295,15 @@ const createProductReview = async (req, res) => {
 module.exports = {
   addProduct,
   deleteProduct,
-  get_all_products,
-  get_product_ById,
   update_product_ById,
   createProductReview,
-  get_products_by_category,
+  
+  get_all_products,
+  get_product_ByKey,
+  get_product_ById,
+  get_product_ByName,
+  get_product_ByCategory,
+  get_product_ByBrand,
+  get_product_ByPrice,
+  get_product_ByRating
 };

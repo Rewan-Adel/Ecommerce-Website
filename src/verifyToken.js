@@ -1,17 +1,17 @@
 const jwt = require('jsonwebtoken')
 require("dotenv").config()
 
-const verfiyAdminToken = async(req, res, nxt)=>{
+const verifyAdminToken = async(req, res, nxt)=>{
     try{
         const token = await req.cookies.jwt
-        const decodedpayload = await jwt.verify(token , process.env.JWTSEC)
-        if(!decodedpayload.adminRole){
+        const decodedpayload = await jwt.verify(token , process.env.JWT_SECRET)
+        if(!decodedpayload.Role){
             return res.status(401).json({  
                 "message": "Unauthorized!",
                 "status code": 401
             })
         }
-        nxt()
+        nxt();
     }
     catch(err){
         console.log(err)
@@ -19,4 +19,4 @@ const verfiyAdminToken = async(req, res, nxt)=>{
     }
 }
 
-module.exports = verfiyAdminToken
+module.exports = verifyAdminToken

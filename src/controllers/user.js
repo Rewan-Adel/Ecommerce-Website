@@ -1,7 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
-
+const generateToken = require('../util/generateToken')
 const register = async (req, res) => {
   try {
     if (!validator.isEmail(req.body.email)) {
@@ -21,7 +21,7 @@ const register = async (req, res) => {
 
     const HashedPass = await bcrypt.hash(req.body.password, 8);
     user = new User({
-      fristName: req.body.fristName,
+      firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
       password: HashedPass,
@@ -29,10 +29,10 @@ const register = async (req, res) => {
       city: req.body.city,
     });
     await user.save();
-    let token = await user.AuthToken(res);
+    let token = await generateToken(user,res);
     res.json({
-      message: `${user.fristName} ${user.lastName} is registred`,
-      fristName: user.fristName,
+      message: `${user.firstName} ${user.lastName} is registered`,
+      firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       street: user.street,
@@ -62,17 +62,19 @@ const auth = async (req, res) => {
       });
     }
 
-    let token = await user.AuthToken(res);
+    let token =  generateToken(user, res);
     return res.json({
       message: "Logged in successfully",
-      fristName: user.fristName,
-      lasrName: user.lastName,
-      email: user.email,
-      street: user.street,
-      city: user.city,
-      id: user._id,
-      isAdmin: user.isAdmin,
-      token: token,
+      // firstName: user.firstName,
+      // lastName: user.lastName,
+      // email: user.email,
+      // street: user.street,
+      // city: user.city,
+      // id: user._id,
+      // isAdmin: user.isAdmin,
+      // token: token,
+         user, 
+         token
     });
   } catch (err) {
     console.log(err);
@@ -92,7 +94,7 @@ const logout = async (req, res) => {
 const getAll = async (req, res) => {
   try {
     let user = await User.find().select({
-      fristName: 1,
+      firstName: 1,
       lastName: 1,
       email: 1,
     });
@@ -107,7 +109,7 @@ const getOne = async (req, res) => {
     const user = await User.findById({ _id: req.params.id });
     if (user) {
       return res.json({
-        fristName: user.fristName,
+        firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         street: user.street,

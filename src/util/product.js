@@ -9,7 +9,7 @@ const product_schema = {
         "category": {'type': 'string' },
         "description": { "type":"string"},
        // "avatar": {'type': 'buffer'},
-       "price":{"type": "string"}
+       "price":{"type": "number"}
     },
     // "required": ['name',
     //     'category',
