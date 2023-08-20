@@ -1,11 +1,12 @@
-const express = require('express')
-const router = express.Router()
-const controller = require('../controllers/cart')
+const express = require('express');
+const router = express.Router();
+const controller = require('../controllers/cartCtr');
+const {verifyToken, isAdmin} = require('../middlewares/verifyToken');
 
-router.post("/", controller.addCart)
-router.get("/",   controller.get_all_carts)
-router.get("/:id", controller.get_ById)
-router.patch("/:id", controller.update_cart_ById)
-router.delete("/:id",controller.deleteCart)
+router.post("/",     verifyToken,  controller.add_cart);
+router.get("/:id",   verifyToken,  controller.get_cart_ById);
+router.patch("/:id", verifyToken,  controller.update_cart_ById);
+router.delete("/:id",verifyToken, controller.delete_cart);
 
-module.exports = router
+router.get("/",  verifyToken, isAdmin, controller.get_all_carts);
+module.exports = router;

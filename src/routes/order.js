@@ -1,13 +1,12 @@
-const express = require('express')
-const router = express.Router()
-const controller = require('../controllers/order')
-// const validator = require('../middlewares/order')
+const express = require('express');
+const router = express.Router();
+const controller = require('../controllers/orderCtr');
+const {verifyToken, isAdmin} = require('../middlewares/verifyToken');
 
+// router.post("/", controller.addOrder)
+router.get("/:id",   verifyToken,   controller.get_order_ById);
+router.patch("/:id",  verifyToken,  controller.update_order_ById);
+router.delete("/:id", verifyToken,  controller.delete_order);
 
-router.post("/", controller.addOrder)
-router.get("/",  controller.get_all_orders)
-router.get("/:id",controller.get_ById)
-router.patch("/:id", controller.update_order_ById)
-router.delete("/:id", controller.deleteorder)
-
-module.exports = router
+router.get("/",      verifyToken, isAdmin,  controller.get_all_orders);
+module.exports = router;

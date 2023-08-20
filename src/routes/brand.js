@@ -1,9 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const brand = require("../controllers/brand");
+const brandController = require("../controllers/brandCtr");
+const {verifyToken, isAdmin} = require('../middlewares/verifyToken');
 
-router.post("/", brand.addBrand);
-router.get("/", brand.get_all_brands);
-router.delete("/:id", brand.deleteBrand);
+router.get("/:key", verifyToken,  brandController.get_brand_ByKey);
+router.get("/",     verifyToken, brandController.get_all_brands);
+
+router.post("/",     verifyToken, isAdmin, brandController.add_brand);
+router.delete("/:id",verifyToken, isAdmin, brandController.delete_brand);
+router.patch("/:id", verifyToken, isAdmin, brandController.update_brand_ById);
 
 module.exports = router;
