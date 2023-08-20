@@ -34,6 +34,7 @@ CLOUD_NAME = your_cloud_name
 CLOUD_KEY  = your_cloud_key_
 CLOUD_KEY_SECRET= your_cloud_secret_key
 SENDGRID_API_KEY = your_sendgrid_api_key
+```
 
 # Usage
 - Run npm install to install dependencies
