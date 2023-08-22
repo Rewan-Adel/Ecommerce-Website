@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userCtr');
 const authController = require('../controllers/authCtr');
-const {verifyToken, isAdmin} = require('../middlewares/verifyToken');
+const {verifyToken, isAdmin} = require('../middlewares/token');
 
 router.post("/signup",          authController.signup);
-router.post("/auth",              authController.login);
+router.post("/login",              authController.login);
 router.post("/logout",            authController.logout);
 router.patch("/:id", verifyToken, userController.updateOne);
 router.get("/:id",   verifyToken, userController.getOne); //get his profile

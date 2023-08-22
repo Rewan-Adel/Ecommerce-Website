@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {verifyToken, isAdmin} = require('../middlewares/verifyToken');
+const {verifyToken, isAdmin} = require('../middlewares/token');
 
 router.get("/:key", verifyToken,  categoryController.get_category_ByKey);
 router.get("/",     verifyToken, categoryController.get_all_categories);

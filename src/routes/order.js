@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/orderCtr');
-const {verifyToken, isAdmin} = require('../middlewares/verifyToken');
+const {verifyToken, isAdmin} = require('../middlewares/token');
 
 // router.post("/", controller.addOrder)
 router.get("/:id",   verifyToken,   controller.get_order_ById);

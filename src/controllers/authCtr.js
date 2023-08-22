@@ -2,27 +2,12 @@ const User = require('../models/userModel');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken')
 const asyncHandler = require('express-async-handler');
+const {generateToken} = require('../middlewares/Token'); 
 
-const generateToken = (user, res)=>{
-    const token = jwt.sign({ 
-      userId : user._id,
-      isAdmin : user.isAdmin },
-      process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-  
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== "development", // Use secure cookies in production
-      sameSite: "strict", // Prevent CSRF attacks
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
-    });
-    return token;
-};
- 
 exports.signup = asyncHandler(async(req, res) => {
  
     let user = new User(req.body);
+    user.confirmPassword = undefined;
     await user.save();
   
     res.status(200).json({
@@ -30,6 +15,7 @@ exports.signup = asyncHandler(async(req, res) => {
       user
     });
     const token = await generateToken(user,res);
+    
     res.json({
       message: `${user.firstName} ${user.lastName} is registered`, user, token
     });
@@ -58,6 +44,7 @@ exports.login = asyncHandler( async (req, res) => {
     }
 
     let token = await  generateToken(user, res);
+    user.confirmPassword = undefined;
     return res.json({
       message: "Logged in successfully", user,  token
     }); 

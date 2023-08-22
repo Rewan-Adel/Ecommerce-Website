@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const brandController = require("../controllers/brandCtr");
-const {verifyToken, isAdmin} = require('../middlewares/verifyToken');
+const {verifyToken, isAdmin} = require('../middlewares/token');
 
 router.get("/:key", verifyToken,  brandController.get_brand_ByKey);
 router.get("/",     verifyToken, brandController.get_all_brands);

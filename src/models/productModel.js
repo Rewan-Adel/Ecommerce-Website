@@ -27,7 +27,7 @@ const ProductSchema = new mongoose.Schema(
     description: { type: String, required: true },
     price: { type: Number, required: true },
     countInStock: { type: Number, required: true, default : 0 },
-    avatar: { type: String },
+    image: { type: String, default: "https://res.cloudinary.com/dt6idcgyw/image/upload/v1692522045/Default_pfp.svg_wvwrib.png"},
     reviews : {type : mongoose.Schema.Types.ObjectId, ref : "reviews"}
   },
   {
@@ -35,7 +35,7 @@ const ProductSchema = new mongoose.Schema(
   }
 );
 const Product  = mongoose.model("Products", ProductSchema);
-const Reviews  =  mongoose.model('reviews', reviewSchema);
+const Reviews  = mongoose.model('reviews', reviewSchema);
 
 module.exports =  {
   Product, 

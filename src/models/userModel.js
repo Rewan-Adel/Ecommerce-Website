@@ -15,11 +15,17 @@ const userSchema = new mongoose.Schema(
     },
     password: { type: String, minlength: 4, maxlength: 20, required:[ true , 'please, enter a password']},
     confirmPassword: { type: String, required:[ true, 'Confirm Password'] },
-    street: { type: String, required: true },
+    mobile :{ type:String, maxlength: 11, minlength:11 ,required: true}, 
+    street: { type: String },
     city: { type: String, required: true },
+
     isAdmin: { type: Boolean, default: false },
     cart : { type : mongoose.Schema.Types.ObjectId, ref: 'carts'},
-    wishlist : { type : mongoose.Schema.Types.ObjectId, ref: 'products'}
+    wishlist : { type : mongoose.Schema.Types.ObjectId, ref: 'products'},
+    refreshToken : {type:String}
+  },
+  {
+    toJSON: {virtuals : true}
   },
   {
     timestamps: true,
