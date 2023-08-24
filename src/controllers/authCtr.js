@@ -5,8 +5,10 @@ const asyncHandler = require('express-async-handler');
 const {generateToken} = require('../middlewares/Token'); 
 
 exports.signup = asyncHandler(async(req, res) => {
- 
-    let user = new User(req.body);
+    let user = await User.findOne({ email: req.body.email });
+    if (user){ res.status(400).json({message: "User already exists."}); }
+    
+    user = new User(req.body);
     user.confirmPassword = undefined;
     await user.save();
   
@@ -15,7 +17,7 @@ exports.signup = asyncHandler(async(req, res) => {
       user
     });
     const token = await generateToken(user,res);
-    
+  
     res.json({
       message: `${user.firstName} ${user.lastName} is registered`, user, token
     });

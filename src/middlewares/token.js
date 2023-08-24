@@ -27,7 +27,7 @@ const refreshToken = (user, res)=>{
       process.env.JWT_SECRET, {
       expiresIn: "3d",
     });
-  
+    
     res.cookie("refreshToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== "development", // Use secure cookies in production

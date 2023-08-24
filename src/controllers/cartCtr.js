@@ -27,12 +27,14 @@ exports.add_cart = asyncHandler(async(req, res)=>{
     }
   
     for(let i=0; i < cart.length; i++){
-        let obj = {};
-        obj.productId = cart[i].productId;        
-        obj.count     = cart[i].count;
-        let getPrice  = await Product.findById(cart[i].productId).select("price").exec();
-        obj.price     = getPrice.price;
-        products.push(obj);
+      let obj = {};
+      let product  = await Product.findById(cart[i].productId).select(["name","price"]).exec();
+      
+      obj.productId = cart[i].productId;        
+      obj.name = cart[i].name;        
+      obj.count     = cart[i].count;
+      obj.price     = product.price;
+      products.push(obj);
       }
 
       // let  crt = req.body.products 

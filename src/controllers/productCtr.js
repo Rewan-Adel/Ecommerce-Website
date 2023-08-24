@@ -50,7 +50,7 @@ exports.createProductReview = asyncHandler(async (req, res) => {
     await product.updateOne( 
         {$push : {reviews : review._id}},
         {new : true}
-      )
+      );
         
    await Product.findOne({_id:req.params.id}).populate("reviews")
       .then( review =>{

@@ -15,12 +15,6 @@ exports.getOne      = getById(User);
 exports.DeleteOne   = deleteOne(User);
 exports.searchUser  = get_ByKey(User);
 exports.updateOne   = updateById(User);
-
-// exports.updateOne   = asyncHandler(async(req,res)=>{
-//   if(req.email)
-//     if(!validator.isEmail(req.body.email)) return res.status(400).json({message: "Invalid Email"});
-//   updateById(User);
-//  });
  
 exports.adminTrue  =  asyncHandler(async(req, res)=>{
   let user = await User.findByIdAndUpdate({_id: req.params.id}, {isAdmin:true})

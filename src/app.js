@@ -8,7 +8,7 @@ const userRouter     = require('./routes/user');
 const productsRouter = require('./routes/product');
 const cartRouter     = require('./routes/cart');
 const orderRouter    = require('./routes/order');
-const payRouter      = require('./routes/payment');
+const stripeRouter   = require('./routes/stripe');
 
 require('dotenv').config();
 mongoose.connect(process.env.MONGO_URI)
@@ -19,10 +19,11 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
 
-app.use("/api/pay",     payRouter);
 app.use("/api/user",    userRouter);
 app.use("/api/cart",    cartRouter);
+
 app.use("/api/order",   orderRouter);
 app.use("/api/product", productsRouter);
+app.use("/api/stripe",  stripeRouter);
 
 module.exports = app;

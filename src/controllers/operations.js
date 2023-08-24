@@ -14,10 +14,11 @@ exports.addNew = (Model) => asyncHandler(async (req, res) => {
   });
 
 exports.updateById = (Model) => asyncHandler(async(req, res) => {
-    const data = await Model.findOne({ _id: req.params.id });
+    const data = await Model.findById(req.params.id);
+    if(req.body.email)
       if (!data) {
         return res.status(404).json({
-          message: " not found !",
+          message: "Not found !",
         });
       }
       

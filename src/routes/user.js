@@ -4,16 +4,17 @@ const userController = require('../controllers/userCtr');
 const authController = require('../controllers/authCtr');
 const {verifyToken, isAdmin} = require('../middlewares/token');
 
-router.post("/signup",          authController.signup);
-router.post("/login",              authController.login);
-router.post("/logout",            authController.logout);
-router.patch("/:id", verifyToken, userController.updateOne);
-router.get("/:id",   verifyToken, userController.getOne); //get his profile
+router.post("/signup",           authController.signup);
+router.post("/login",             authController.login);
+router.get("/logout",            authController.logout);
+
+router.patch("/:id",  userController.updateOne);
+router.get("/:id",   verifyToken, userController.getOne);
 
 // @des Admin operations
-router.get("/",            verifyToken , isAdmin, userController.getAllUsers);
-router.delete("/:id",      verifyToken,  isAdmin, userController.DeleteOne);
-router.get("/search/:key", verifyToken,  isAdmin, userController.searchUser);
+router.get("/",              verifyToken,  isAdmin, userController.getAllUsers);
+router.delete("/:id",        verifyToken,  isAdmin, userController.DeleteOne);
+router.get("/search/:key",   verifyToken,  isAdmin, userController.searchUser);
 router.patch("/admin?true",  verifyToken,  isAdmin, userController.adminTrue);
 router.patch("/admin?false", verifyToken,  isAdmin, userController.adminFalse);
 
