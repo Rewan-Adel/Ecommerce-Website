@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/cartCtr');
-const {verifyToken, isAdmin} = require('../middlewares/token');
+const {verifyToken, isAdmin} = require('../util/token');
 
 router.post("/",       controller.add_cart);
 router.get("/:id",   verifyToken,  controller.get_cart_ById);

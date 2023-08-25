@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const asyncHandler = require('express-async-handler');
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
   {
@@ -24,7 +26,9 @@ const userSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, default: false },
     cart : { type : mongoose.Schema.Types.ObjectId, ref: 'carts'},
     wishlist : { type : mongoose.Schema.Types.ObjectId, ref: 'products'},
-    refreshToken : {type:String}
+
+    token: { type: String },
+    verifyToken:{type: String} //when user reset password
   },
   {
     timestamps: true,
@@ -39,8 +43,20 @@ userSchema.pre('save', async function (next){
   next();
 });
 
-userSchema.method.isPasswordMatch = async(pass)=>{
-  return await bcrypt.compare(pass, this.password);
-};
+userSchema.methods.generateToken = asyncHandler(async function(){
+  const token = jwt.sign({ 
+    userId : this._id,
+    isAdmin : this.isAdmin },
+    process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
+  this.token = token;
+  //await this.save();
+  return token;
+});
+
+// userSchema.method.isPasswordMatch = async(pass)=>{
+//   return await bcrypt.compare(pass, this.password);
+// };
 
 module.exports = mongoose.model("users", userSchema);

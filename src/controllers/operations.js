@@ -2,15 +2,16 @@ const asyncHandler = require('express-async-handler');
 
 //@desc  crud operations
 exports.addNew = (Model) => asyncHandler(async (req, res) => {
+  if(req.params.id){
     let data = Model.findById(req.params.id);
     if(data) res.status(400).json({message: "Already exists"});
-    else{
-      data = new Model(req.body);
-      await data.save();
-      res.status(200).json({
+    }
+    data = new Model(req.body);
+    await data.save();
+    res.status(200).json({
         message: "Added Successfully",
         data
-      });}
+      });
   });
 
 exports.updateById = (Model) => asyncHandler(async(req, res) => {

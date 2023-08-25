@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const controller = require('../controllers/productCtr')
-const {verifyToken, isAdmin} = require('../middlewares/token');
+const {verifyToken, isAdmin} = require('../util/token');
 
 router.get("/",             verifyToken, controller.get_all_products);
 router.get("/:id",          verifyToken, controller.get_product_ById);
