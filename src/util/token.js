@@ -39,8 +39,7 @@ const isAdmin = asyncHandler(async(req, res, nxt)=>{
 });
 
 module.exports = {
-    generateToken,
-    verifyToken,
+      verifyToken,
     isAdmin,
     refreshToken
   };

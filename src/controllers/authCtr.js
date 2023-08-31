@@ -1,9 +1,8 @@
 const User = require('../models/userModel');
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken')
 const asyncHandler = require('express-async-handler');
-const validator = require('validator');
 const sgMail = require('@sendgrid/mail');
+const crypto = require('crypto');
 require('dotenv').config();
 
 exports.signup = asyncHandler(async(req, res) => {
@@ -66,24 +65,27 @@ exports.logout = asyncHandler(async (req, res) => {
       res.json({ message: "Logged out successfully" });
   });
 
-//when user enter his/her email to send link
 exports.forgotPassword = asyncHandler(async (req, res) => {
-  let Email = await validator.isEmail(req.body.email);
-  if(!Email) return res.status(400).json({message : "Email is required"});
-
-  Email = req.body.email;
+  const Email = req.body.email;
+  if(!Email) return res.status(400).json({message: 'Email is required'}) 
   const user = await User.findOne({email: Email});
   if(!user) return res.status(400).json({message : "Invalid Email"});
   
-  let token = jwt.sign({userId: user._id},process.env.JWT_SECRET, {expiresIn:"5m"});
-  let link  = `http://localhost:8080/api/user/reset-password/${user._id}/${token}`;
-  console.log(link);
+  let token = crypto.randomBytes(32).toString('hex');
+  user.resetToken = token;
+  user.resetTokenExpires = Date.now()+(45 * 60 * 1000);
+  await user.save();
+
+  let link  = `http://${req.headers.host}/reset-password/${user._id}/${token}`;
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   const msg = {
     from : process.env.EMAIL_NAME,
     to   : Email,
     subject : "Bazaar",
-    text : `Hello\n `+' you can reset your password by clicking the link below:\n' +link
+    html : `<h2>Hello</h2>
+    <p> you can reset your password by clicking the link below:</p>
+    <a href='${link}'>Reset Password</a>
+   <p>Please note that for added security this link becomes invalid after 45 minutes</p>`
   };
   sgMail.send(msg)
   .then(
@@ -92,44 +94,19 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
   .catch((err)=> console.log(err));
 });
 
-exports.resetEmail = asyncHandler(async (req, res) => {
-
+exports.resetPassword  = asyncHandler(async (req, res) =>{
+ let user = await User.findOne({resetToken: req.params.token});
+ //if(user.resetTokenExpires > Date.now()) return res.status(400).json({message: 'link has expired'});
+ 
+if(req.body.password != req.body.confirmPass) return res.status(400).json({message:"Password does not match"});
+const passCompared = await bcrypt.compare(req.body.password, user.password);
+if(passCompared) return res.status(400).json({message:"password is not strong enough"});
+const pass = await  bcrypt.hash(req.body.password, 10);
+//Setup new password
+user.password = pass;
+user.confirmPassword = undefined;
+user.resetToken = undefined; 
+user.resetTokenExpires = undefined;
+await user.save();
+res.json({message:'password changed'}); //redirect to home page
 });
-
-exports.resetPassword  = asyncHandler(async (req, res) => {
-});
-
-
-
-  
-//   let userToken = await User.findByIdAndUpdate(user._id, {verifyToken:token}, {new:true});
-//   if(userToken){
-//     //const sgMail = require('@sendgrid/mail');
-// const nodeMailer = require('nodemailer')
-// const smtpTransport = require('nodemailer-smtp-transport')
-// require('dotenv').config();
-
-// //sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-// // email config
-// const transporter = nodeMailer.createTransport({
-//     //host: 'smtp.sendgrid.net',
-//     service:"gmail",
-//     //port : 587,
-//     pool: true, // This is the field you need to add
-//     auth:{
-//         user: "apikey",
-//         pass: process.env.SENDGRID_API_KEY
-//   }
-// }); 
-//   const mailOptions = {
-//     from : process.env.EMAIL_NAME,
-//     to   : 'rewanmahrous7@gmail.com',
-//     subject : "Reset Password",
-//     text : `the link valid for 2min http:/localhost:8080/ `
-//   }
-//   await transporter.sendMail(mailOptions, (err, info)=>{
-//   if(err) res.status(401).json({message:"email not sent!", err});
-//   else res.json({message:"check your email", info});
-//   transporter.close();
-

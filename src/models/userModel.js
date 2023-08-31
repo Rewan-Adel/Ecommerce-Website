@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
        }
     },
     password: { type: String, min: 4, max: 20, trim : true ,required:[ true , 'please, enter a password']},
-    confirmPassword: { type: String , required:[ true, 'Confirm Password']},
+    confirmPassword: { type: String },
     mobile :{ type:String, max: 11, min:11 }, 
     city: { type: String, required: true },
     street: { type: String },
@@ -27,8 +27,8 @@ const userSchema = new mongoose.Schema(
     cart : { type : mongoose.Schema.Types.ObjectId, ref: 'carts'},
     wishlist : { type : mongoose.Schema.Types.ObjectId, ref: 'products'},
 
-    token: { type: String },
-    verifyToken:{type: String} //when user reset password
+    resetToken: { type: String },
+    resetTokenExpires:{type: Date} 
   },
   {
     timestamps: true,
@@ -43,6 +43,11 @@ userSchema.pre('save', async function (next){
   next();
 });
 
+
+// userSchema.methods.isPasswordMatch = async(pass)=>{
+//   return await bcrypt.compare(pass, this.password);
+// };
+
 userSchema.methods.generateToken = asyncHandler(async function(){
   const token = jwt.sign({ 
     userId : this._id,
@@ -55,8 +60,5 @@ userSchema.methods.generateToken = asyncHandler(async function(){
   return token;
 });
 
-// userSchema.method.isPasswordMatch = async(pass)=>{
-//   return await bcrypt.compare(pass, this.password);
-// };
 
 module.exports = mongoose.model("users", userSchema);

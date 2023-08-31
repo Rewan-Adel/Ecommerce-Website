@@ -4,21 +4,26 @@ const userController = require('../controllers/userCtr');
 const authController = require('../controllers/authCtr');
 const {verifyToken, isAdmin} = require('../util/token');
 
-router.post("/signup",           authController.signup);
-router.post("/login",            authController.login);
-router.get("/logout",            authController.logout);
+router.post("/signup", authController.signup);
+router.post("/login",  authController.login );
+router.get("/logout",  authController.logout);
 
-router.post("/forgotPassword",   authController.forgotPassword);
-router.get("/reset-password/:id/:token",   authController.resetEmail);
+router.post("/forgotPassword", authController.forgotPassword);
+router
+    .route("/reset-password/:id/:token")
+    .get((req,res)=>{res.sendFile('E:\NodeProjects\Ecommerce-Website\src\frontEnd\resetPassword.html')})
+    .post(authController.resetPassword);
 
-router.patch("/:id",  userController.updateOne);
-router.get("/:id",   verifyToken, userController.getOne);
+router
+    .route("/:id", verifyToken)
+    .patch(userController.updateOne)
+    .get(userController.getOne);
 
 // @des Admin operations
 router.get("/",              verifyToken,  isAdmin, userController.getAllUsers);
 router.delete("/:id",        verifyToken,  isAdmin, userController.DeleteOne);
 router.get("/search/:key",   verifyToken,  isAdmin, userController.searchUser);
-router.patch("/admin?true",  verifyToken,  isAdmin, userController.adminTrue);
-router.patch("/admin?false", verifyToken,  isAdmin, userController.adminFalse);
+router.patch("/admin?true/:id",  verifyToken,  isAdmin, userController.adminTrue);
+router.patch("/admin?false/:id", verifyToken,  isAdmin, userController.adminFalse);
 
 module.exports = router;
