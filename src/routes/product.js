@@ -9,7 +9,6 @@ router.patch("/:id/review", verifyToken, controller.createProductReview);
 
 // @desc Search 
 // @route POST api/product/search/:key
-router.get("/search/:key",         verifyToken,  controller.get_product_ByKey);
 router.get("/search/name/:key",    verifyToken,  controller.get_product_ByName);
 router.get("/search/brand/:key",   verifyToken,  controller.get_product_ByBrand);
 router.get("/search/rating/:key",  verifyToken,  controller.get_product_ByRating);

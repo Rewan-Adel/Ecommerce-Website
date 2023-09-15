@@ -68,7 +68,7 @@ exports.createProductReview = asyncHandler(async (req, res) => {
 
 // @desc Search )
 // @route POST api/product/search/:id
-exports.get_product_ByKey = get_ByKey(Product);
+//exports.get_product_ByKey = get_ByKey(Product);
 exports.get_product_ByName = asyncHandler(async(req, res)=>{
   let data = await Product.find({name:{ $regex : req.params.key}})
   if( data.length > 0) {res.send(data)}

@@ -22,13 +22,14 @@ router
     .get(userController.getOne);
 
 
+    
+// @des Admin operations
 router.use(isAdmin);    
 
-// @des Admin operations
 router.get("/",                  userController.getAllUsers);
 router.delete("/:id",            userController.DeleteOne);
 router.get("/search/:key",       userController.searchUser);
-router.patch("/admin?true/:id",  userController.adminTrue);
-router.patch("/admin?false/:id", userController.adminFalse);
+router.patch("/admin=true/:id",  userController.adminTrue); 
+router.patch("/admin=false/:id", userController.adminFalse);
 
 module.exports = router;

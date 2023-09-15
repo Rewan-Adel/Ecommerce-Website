@@ -54,10 +54,3 @@ exports.getById =  (Model) => asyncHandler(async (req, res) => {
       return res.json(data);
 
 });
-
-exports.get_ByKey = (Model) => asyncHandler(async(req, res) =>{
-    let data = await Model.find({ $regex : req.params.key });
-    if( data.length > 0) {res.send(data)}
-    else
-      return res.status(404).json({"message": "not found!"});             
-  });

@@ -15,6 +15,7 @@ mongoose.connect(process.env.MONGO_URI)
 .then(console.log("Connected..."))
 .catch((err)=>{console.log(err)});
 
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
