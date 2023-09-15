@@ -27,13 +27,10 @@ exports.updateById = (Model) => asyncHandler(async(req, res) => {
 exports.deleteOne = (Model) => asyncHandler(async(req, res) => {
     let data = await Model.findByIdAndRemove({ _id: req.params.id });
     if (data) {
-        console.log("Successfully deleted.");
-  
         return res.status(200).json({
-          message: "deleted successfully.",
+          message: "Successfully deleted.",
     });
     } else {
-        console.log("No documents matched the query. Deleted 0 documents.");
         return res.status(404).json({
           message: "Not Found !.",
         });

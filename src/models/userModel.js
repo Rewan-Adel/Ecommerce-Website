@@ -48,14 +48,13 @@ userSchema.pre('save', async function (next){
 //   return await bcrypt.compare(pass, this.password);
 // };
 
-userSchema.methods.generateToken = asyncHandler(async function(){
+userSchema.methods.generateToken = asyncHandler(async function(user){
   const token = jwt.sign({ 
-    userId : this._id,
-    isAdmin : this.isAdmin },
+    userId : user._id,
+    isAdmin : user.isAdmin },
     process.env.JWT_SECRET, {
     expiresIn: "1d",
   });
-  this.token = token;
   return token;
 });
 

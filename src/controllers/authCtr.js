@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const asyncHandler = require('express-async-handler');
 const {resetPassEmail} = require('../util/email');
 const crypto = require('crypto');
+const { unsubscribe } = require('diagnostics_channel');
 require('dotenv').config();
 
 exports.signup = asyncHandler(async(req, res) => {
@@ -10,7 +11,7 @@ exports.signup = asyncHandler(async(req, res) => {
     if (user){ res.status(400).json({message: "User already exists."}); }
     
     user = new User(req.body);
-    const token = await user.generateToken();
+    const token = await user.generateToken(user);
     await user.save();
     user.confirmPassword = undefined;
   
@@ -39,14 +40,13 @@ exports.login = asyncHandler( async (req, res) => {
 
     let validPass = await bcrypt.compare(req.body.password, user.password);
     if (!validPass) {
-      console.log(validPass)
       return res.status(400).json({
         message: "Invalid password or email",
         "status code": 400,
       });
     }
 
-    let token = await  user.generateToken();
+    let token = await  user.generateToken(user);
     res.cookie('jwt', token , {
       httpOnly : true,
       secure: process.env.NODE_ENV != "development",

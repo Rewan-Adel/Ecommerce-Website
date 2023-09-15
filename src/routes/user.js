@@ -16,13 +16,13 @@ router
 
     
 router
-    .route("/:id", verifyToken)
+    .route("/:id")
     .patch(userController.updateOne)
-    .get(userController.getOne);
+    .get(verifyToken, userController.getOne);
 
 // @des Admin operations
-router.get("/",                  verifyToken,  isAdmin, userController.getAllUsers);
-router.delete("/:id",            verifyToken,  isAdmin, userController.DeleteOne);
+router.get("/",             verifyToken,  isAdmin, userController.getAllUsers);
+router.delete("/:id",       verifyToken,  isAdmin, userController.DeleteOne);
 router.get("/search/:key",       verifyToken,  isAdmin, userController.searchUser);
 router.patch("/admin?true/:id",  verifyToken,  isAdmin, userController.adminTrue);
 router.patch("/admin?false/:id", verifyToken,  isAdmin, userController.adminFalse);
