@@ -15,16 +15,20 @@ router
     .post(authController.resetPassword);
 
     
+router.use(verifyToken);    
 router
     .route("/:id")
     .patch(userController.updateOne)
-    .get(verifyToken, userController.getOne);
+    .get(userController.getOne);
+
+
+router.use(isAdmin);    
 
 // @des Admin operations
-router.get("/",             verifyToken,  isAdmin, userController.getAllUsers);
-router.delete("/:id",       verifyToken,  isAdmin, userController.DeleteOne);
-router.get("/search/:key",       verifyToken,  isAdmin, userController.searchUser);
-router.patch("/admin?true/:id",  verifyToken,  isAdmin, userController.adminTrue);
-router.patch("/admin?false/:id", verifyToken,  isAdmin, userController.adminFalse);
+router.get("/",                  userController.getAllUsers);
+router.delete("/:id",            userController.DeleteOne);
+router.get("/search/:key",       userController.searchUser);
+router.patch("/admin?true/:id",  userController.adminTrue);
+router.patch("/admin?false/:id", userController.adminFalse);
 
 module.exports = router;

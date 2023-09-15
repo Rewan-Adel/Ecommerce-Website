@@ -11,7 +11,7 @@ const verifyToken = asyncHandler(async(req, res, nxt)=>{
        req.user = user;
        nxt();
    }
-   else res.status(40).json("You are not logged in! Please login for get access'");    
+   else res.status(400).json("You are not logged in! Please login for get access'");    
 });
 
 const isAdmin = asyncHandler(async(req, res, nxt)=>{
