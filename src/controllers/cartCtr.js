@@ -15,25 +15,47 @@ exports.delete_cart      = deleteOne(Cart);
 exports.get_cart_ById    = getById(Cart);
 exports.update_cart_ById = updateById(Cart);
   
+exports.addToCart = asyncHandler(async(req, res)=>{
+  const product = await Product.findById(req.body.productId);
+ 
+  // 1) Get Cart for logged user
+  let cart = await Cart.findOne({userId: req.cookies.jwt.userId});
+  console.log(req.cookies.jwt.userId)
+  if(!cart)
+    cart = await Cart.create({
+      userId :req.cookies.jwt.userId, 
+      items  : [{
+        productId: req.body.productId,
+        count    : req.body.count,
+        price    : product.price
+      }]
+    })
+  
+  return res.json({message :product.price})  
+
+});
+
 exports.add_cart = asyncHandler(async(req, res)=>{
     const cart = req.body.items;
     const _id  = req.body.userId;
     const user = await User.findById(_id);
+    if(!user) return res.status(404).json("User not found!");
+
     const products = [];
-    // check if user already have product in cart
+    
     const cartExists = await Cart.findOne({userId :_id});
-    if(cartExists) {
+    if(!cartExists) {
      await cartExists.deleteOne();
     }
   
-    for(let i=0; i < cart.length; i++){
+    for(let i=1; i <= cart.length; i++){
       let obj = {};
-      let product  = await Product.findById(cart[i].productId).select(["name","price"]).exec();
-      
+
       obj.productId = cart[i].productId;        
-      obj.name = cart[i].name;        
+      obj.name      = cart[i].name;        
       obj.count     = cart[i].count;
-      obj.price     = product.price;
+      obj.price     = await Product.findById(cart[i].productId).select("price").exec();
+      console.log(cart[1].productId)
       products.push(obj);
       }
 
@@ -42,12 +64,11 @@ exports.add_cart = asyncHandler(async(req, res)=>{
 
     let totalCart = 0;
     for(let i=0; i< products.length ; i++){
-      if(! products[i].count) products[i].count = 1;
         totalCart = totalCart + products[i].price * products[i].count; 
       }
 
     let newCart = new Cart({
-        userId: user._id,
+        userId   : user._id,
         products : products,
         cartTotal: totalCart
     });

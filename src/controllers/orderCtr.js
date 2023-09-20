@@ -15,18 +15,13 @@ exports.get_order_ById    = getById(Order);
 exports.update_order_ById = updateById(Order);
 
 exports.addOrder          = asyncHandler(async(req, res)=>{
-  let orderExist = await Order.findOne({userId:req.body.userId});
-  if(orderExist) orderExist.deleteOne();
-
-  let order = new Order(req.body);
-  order.updateOne(
-    {$push:{products: req.body.product}},
-    {new : true}
-  );
-  await order.save();
-  return res.json({
-      message : "Added successfully", order
-    })
+  // let orderExist = await Order.findOne({userId:req.body.userId});
+  // if(orderExist) orderExist.deleteOne();
+  let cart = req.body.cartId;
+  if(cart.length == 0) 
+   return res.status(400).json({ message: 'Cart is empty.'});
+  
+  addNew(Order); 
 });
 
 

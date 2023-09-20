@@ -2,11 +2,15 @@ const express = require("express");
 const router = express.Router();
 const {verifyToken, isAdmin} = require('../middlewares/token');
 
-router.get("/:key", verifyToken,  categoryController.get_category_ByKey);
-router.get("/",     verifyToken, categoryController.get_all_categories);
+router.get("/:key",  categoryController.get_category_ByKey);
+router.get("/",     categoryController.get_all_categories);
 
-router.post("/",      verifyToken, isAdmin,  categoryController.add_category);
-router.delete("/:id", verifyToken, isAdmin, categoryController.delete_category);
-router.patch("/:id",  verifyToken, isAdmin, categoryController.update_category_ById);
+
+router.use(verifyToken);    
+router.use(isAdmin);    
+
+router.post("/",       categoryController.add_category);
+router.delete("/:id",  categoryController.delete_category);
+router.patch("/:id",   categoryController.update_category_ById);
 
 module.exports = router;
