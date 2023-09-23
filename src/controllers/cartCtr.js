@@ -12,13 +12,12 @@ const {
 
 exports.get_all_carts    = getAll(Cart);
 exports.delete_cart      = deleteOne(Cart);
-exports.get_cart_ById    = getById(Cart);
 exports.update_cart_ById = updateById(Cart);
-  
+
 
 exports.addToCart = asyncHandler(async(req, res)=>{
-    const cart = req.body.items;
-    const user = await User.findById(req.body.userId);
+  const cart = req.body.items;
+  const user = await User.findById(req.body.userId);
     if(!user) return res.status(404).json("User not found!");
     
     const cartExists = await Cart.findOne({userId : user._id});
@@ -49,6 +48,16 @@ exports.addToCart = asyncHandler(async(req, res)=>{
       });
     await newCart.save();
 
-  res.status(200).json({message : 'Added to cart'});
+  res.status(200).json({message : 'Added to cart', newCart});
 
 });
+
+exports.get_cart_ById  = asyncHandler(async(req, res)=>{ 
+  const cartExists = await Cart.findOne({userId : req.params.id});
+  if(!cartExists)
+    return res.status(404).json({message : "not found !"});
+  
+  return res.status(200).json({cartExists});
+  
+});
+
