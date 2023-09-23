@@ -21,7 +21,10 @@ mongoose.connect(process.env.MONGO_URI)
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(cors());
+app.use(cors({
+    origin: `http://localhost:${process.env.PORT}`,
+    credentials: true
+}));
 
 app.use("/api/user",    userRouter);
 app.use("/api/cart",    cartRouter);

@@ -6,6 +6,7 @@ const {verifyToken, isAdmin} = require('../util/token');
 // router.get("/:key",  brandController.get_brand_ByKey);
 router.get("/",      brandController.get_all_brands);
 router.get("/:id",      brandController.get_brand_ById);
+
 router.use(verifyToken);    
 router.use(isAdmin);    
 

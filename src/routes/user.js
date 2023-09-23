@@ -11,7 +11,6 @@ router.get("/logout",  authController.logout);
 router.post("/forgotPassword", authController.forgotPassword);
 router
     .route("/reset-password/:id/:token")
-    .get()
     .post(authController.resetPassword);
 
     

@@ -71,7 +71,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({email: req.body.email});
   if(!user) return res.status(400).json({message : "Invalid Email"});
   
-  let token = crypto.randomBytes(32).toString('hex');
+  let token = crypto.randomBytes(4).toString('hex');
   user.resetToken = token;
   user.resetTokenExpires = Date.now()+(45 * 60 * 1000);
   await user.save();

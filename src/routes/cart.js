@@ -3,10 +3,12 @@ const router = express.Router();
 const controller = require('../controllers/cartCtr');
 const {verifyToken, isAdmin} = require('../util/token');
 
+router.use(verifyToken);
 router.post("/",       controller.addToCart);
-router.get("/:id",   verifyToken,  controller.get_cart_ById);
-router.patch("/:id", verifyToken,  controller.update_cart_ById);
-router.delete("/:id",verifyToken,  controller.delete_cart);
+router.get("/:id",     controller.get_cart_ById);
+router.patch("/:id",   controller.update_cart_ById);
+router.delete("/:id",  controller.delete_cart);
 
-router.get("/",  verifyToken, isAdmin, controller.get_all_carts);
+router.use(isAdmin);
+router.get("/", controller.get_all_carts);
 module.exports = router;

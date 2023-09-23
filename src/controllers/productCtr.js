@@ -59,7 +59,7 @@ exports.createProductReview = asyncHandler(async (req, res) => {
           reviews :  review
         });
     });
-    console.log(product.reviews);    
+    console.log(product);    
   }
     else {
       res.status(404).json({ message: "product not found" });
