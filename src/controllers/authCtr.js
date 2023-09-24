@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const asyncHandler = require('express-async-handler');
 const {resetPassEmail} = require('../util/email');
 const crypto = require('crypto');
-const { unsubscribe } = require('diagnostics_channel');
 require('dotenv').config();
 
 exports.signup = asyncHandler(async(req, res) => {

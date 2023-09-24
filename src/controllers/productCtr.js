@@ -6,8 +6,7 @@ const {
   getAll,
   getById,
   updateById,
-  deleteOne,
-  get_ByKey
+  deleteOne
 } = require('./operations');
 
 exports.get_all_products    = getAll(Product);
@@ -16,10 +15,10 @@ exports.get_product_ById    = getById(Product);
 exports.update_product_ById = updateById(Product);
 
 exports.addProduct          = asyncHandler(async(req, res)=>{
-  let product = Product.find({name : req.body.name});
-  if(product) res.json({message : "Product Already Exists.", product});
-  else{
-    if(req.file){
+  let product = await  Product.findOne({name : req.body.name});
+  if(product) return res.json({message : "Product Already Exists.", _id: product._id});
+
+  if(req.file){
       let img = await cloudinary.uploader.upload(image, {folder : 'products'});
       product = new Product({
         name,
@@ -28,11 +27,12 @@ exports.addProduct          = asyncHandler(async(req, res)=>{
         description,
         price,
         countInStock,
-        avatar : img.secure_url});
-      return res.status(200).json({message : "Successfully added", product});  
-    }
-    else addNew(Product);
-};
+        image : img.secure_url});
+  }
+
+  product = new Product(req.body);
+  await product.save();
+  return res.status(200).json({message : "Successfully added", product});  
 });
 
 // @desc create new review
@@ -42,7 +42,7 @@ exports.createProductReview = asyncHandler(async (req, res) => {
     if (rating < 1 || rating > 5) {
       return res.status(400).json({ message: "Rating should be between 1 and 5." });
     }
-    let product = await Product.findById(req.params.id);
+    let product = await Product.findOne(req.params.id);
     if(product){
       let review = new Reviews({product : req.params.id, user : userId, rating, comment  })
       await review.save()

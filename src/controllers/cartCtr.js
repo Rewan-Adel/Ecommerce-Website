@@ -5,7 +5,6 @@ const asyncHandler = require('express-async-handler');
 
 const {
     getAll,
-    getById,
     updateById,
     deleteOne
   } = require('./operations');
@@ -32,12 +31,17 @@ exports.addToCart = asyncHandler(async(req, res)=>{
       
       obj.productId = cart[i].productId;              
       obj.count     = cart[i].count;
+      obj.name      = product.name;
+      obj.image     = product.image;
       obj.price     = product.price;
       products.push(obj);
       }
      
     let totalPrice = 0;
     for(let i=0; i< products.length ; i++){
+      if(! products[i].count)  
+        products[i].count = 1;
+
       totalPrice = totalPrice + products[i].price * products[i].count; 
       }
 

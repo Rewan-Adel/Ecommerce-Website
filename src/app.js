@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(cors({
-    origin: `http://localhost:${process.env.PORT}`,
+    origin: `${process.env.CLIENT_URL}`,
     credentials: true
 }));
 
