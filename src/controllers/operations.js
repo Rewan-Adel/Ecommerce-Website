@@ -2,9 +2,9 @@ const asyncHandler = require('express-async-handler');
 
 //@desc  crud operations
 exports.addNew = (Model) => asyncHandler(async (req, res) => {
-    let data = new Model(req.body);
-    await data.save();
-    res.status(200).json({
+  let data = new Model(req.body);
+  await data.save();
+  return res.status(200).json({
         message: "Added Successfully",
         data
       });

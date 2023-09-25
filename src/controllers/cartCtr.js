@@ -17,11 +17,10 @@ exports.update_cart_ById = updateById(Cart);
 exports.addToCart = asyncHandler(async(req, res)=>{
   const cart = req.body.items;
   const user = await User.findById(req.body.userId);
-    if(!user) return res.status(404).json("User not found!");
+    if(!user) return res.status(404).json({message: "User not found!"});
     
     const cartExists = await Cart.findOne({userId : user._id});
-    if(cartExists)
-     cartExists.deleteOne();
+    if(cartExists)   cartExists.deleteOne();
 
     const products = [];
     for(let i=0; i < cart.length; i++){
@@ -50,18 +49,40 @@ exports.addToCart = asyncHandler(async(req, res)=>{
         items     : products,
         totalPrice: totalPrice,
       });
-    await newCart.save();
-
-  res.status(200).json({message : 'Added to cart', newCart});
-
+  await newCart.save();
+  res.cart = newCart._id;
+  console.log(res.cart)
+  res.redirect(`http://localhost:8080/api/cart/${newCart._id}`);
 });
 
 exports.get_cart_ById  = asyncHandler(async(req, res)=>{ 
-  const cartExists = await Cart.findOne({userId : req.params.id});
+  const cartExists = await Cart.findById(req.params.id);
   if(!cartExists)
-    return res.status(404).json({message : "not found !"});
+    return res.status(404).json({message : "Cart is empty"});
   
-  return res.status(200).json({cartExists});
+  return res.status(200).json({items: cartExists.items, totalPrice: cartExists.totalPrice});
   
 });
 
+exports.deleteOneItem =  asyncHandler(async(req, res)=>{
+  const item = req.params.id;
+  let cart = await Cart.findById(req.body.cartId);
+  if(!cart) 
+    return res.status(404).json({message: "Not found the cart"});
+
+  for(let i=0 ; i< cart.length ; i++){
+    const product = await Product.findById(cart.items[i].productId);
+    if(cart[i].items.count > 1){
+      cart[i].items.count--;
+      cart[i].totalPrice -= product.price ;  
+  }else{
+    await cart.updateOne(
+     { $pull : {'items.productId': item}} 
+    );
+  }
+  console.log(cart.items[i].count)
+}
+  
+return res.redirect(`http://localhost:8080/api/cart/${cart._id}`);
+
+});

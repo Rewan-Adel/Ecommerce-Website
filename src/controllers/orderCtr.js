@@ -1,6 +1,6 @@
 const Order = require('../models/orderModel');
 const asyncHandler = require('express-async-handler');
-
+const create_checkout_session = require('../routes/stripe')
 const {
     addNew,
     getAll,
@@ -21,7 +21,7 @@ exports.addOrder          = asyncHandler(async(req, res)=>{
   if(cart.length == 0) 
    return res.status(400).json({ message: 'Cart is empty.'});
   
-  addNew(Order); 
+  
 });
 
 

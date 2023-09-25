@@ -14,20 +14,14 @@ const reviewSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-const ProductSchema = new mongoose.Schema(
-  {
-    // user: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   required: true,
-    //   ref: "users",
-    // },
+const ProductSchema = new mongoose.Schema({
     name: { type: String, unique : true ,required: true },
     category: { type: String, required: true },
     brand: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
     countInStock: { type: Number, required: true, default : 0 },
-    image: { type: String, default: "https://res.cloudinary.com/dt6idcgyw/image/upload/v1692522045/Default_pfp.svg_wvwrib.png"},
+    image: { type: String, default: "https://res.cloudinary.com/dt6idcgyw/image/upload/v1692522045/Default_pfp.svg_wvwrib.png", required:true},
     reviews : {type : mongoose.Schema.Types.ObjectId, ref : "reviews"}
   },
   {
