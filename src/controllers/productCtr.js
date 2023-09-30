@@ -3,7 +3,6 @@ const asyncHandler = require('express-async-handler');
 const cloudinary = require('cloudinary');
 
 const {
-  getById,
   updateById,
   deleteOne
 } = require('./operations');
@@ -41,7 +40,7 @@ exports.get_all_products    =  asyncHandler(async(req, res)=>{
 });
 
 exports.get_product_ById    =  asyncHandler(async(req, res)=>{
-  await Product.findById(req.params._id)
+  await Product.findById( req.params.id )
               .populate('reviews')
               .then((products)=>{res.json({count : products.length, products})})
               .catch(err =>{res.status(500).json(err)})
@@ -95,5 +94,4 @@ exports.filter = asyncHandler(async (req, res) => {
   });
   if(data.length == 0) return res.status(404).json({message: "Not found!"});
   res.status(200).json({data});
-
 });
