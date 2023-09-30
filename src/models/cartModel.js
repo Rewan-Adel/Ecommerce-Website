@@ -7,9 +7,10 @@ const cartSchema = new mongoose.Schema({
       count     : { type: Number, default : 1},
       price     : { type: Number , required : true},
       name      : { type: String , required : true},
-      image      : { type: String , required : true},
+      image     : { type: String , required : true},
     }],   
-    totalPrice : {type:Number}
+    totalPrice : {type:Number, required: true},
+    amount     : {type : Number, required: true}
 },{
     timestamp : true
   }

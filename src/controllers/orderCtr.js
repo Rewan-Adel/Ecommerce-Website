@@ -1,8 +1,11 @@
-const Order = require('../models/orderModel');
 const asyncHandler = require('express-async-handler');
-const create_checkout_session = require('../routes/stripe')
+const Cart =  require('../models/cartModel');
+const Order =  require('../models/orderModel');
+const Stripe = require('stripe');
+const stripe = Stripe(process.env.STRIPE_KEY);
+require('dotenv').config();
+
 const {
-    addNew,
     getAll,
     getById,
     updateById,
@@ -14,16 +17,56 @@ exports.get_all_orders    = getAll(Order);
 exports.get_order_ById    = getById(Order);
 exports.update_order_ById = updateById(Order);
 
-exports.addOrder          = asyncHandler(async(req, res)=>{
-  // let orderExist = await Order.findOne({userId:req.body.userId});
-  // if(orderExist) orderExist.deleteOne();
-  let cart = req.body.cartId;
-  if(cart.length == 0) 
-   return res.status(400).json({ message: 'Cart is empty.'});
-  
-  
-});
+exports.addOrder = async(req, res) => {
+  const cart = await Cart.findOne({_id: req.body.cartId});
+  if(!cart) return res.json("the cart is empty!");
 
+  const customer = stripe.customers.create({
+      metadata:{
+      userId : cart.userId,
+      cart   : JSON.stringify(cart.items)
+    }
+  });
+  //Define product information when you create the Checkout Session 
+  //using predefined price IDs or on the fly with price_data
+    const line_items = cart.items?.map((item) => {
+      return {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: item.name,
+            images: [item.image],
+            metadata: {
+              id: item.productId,
+            },
+          },
+          unit_amount: item.price * 100,
+        },
+        quantity: cart.totalPrice,
+      };
+    });
+  
+    //A Checkout Session is the programmatic representation of what your customer sees
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types : ['card'],
+      line_items: line_items,
+      mode: 'payment',
+      customer: customer.id,
+      success_url: `${process.env.CLIENT_URL}/api/order/${cart.userId}`,
+      cancel_url : `${process.env.CLIENT_URL}/cancel`,
+    });
+
+    const order = new Order({
+      userId  :  cart.userId,
+      products:  cart.items,
+      amount  :  cart.amount ,
+      //address : { type: Object, required: true },
+      payment_status: "delivered",
+    });
+    await order.save();
+    await Cart.deleteOne({_id:req.body.cartId})
+    res.json({URL: session.url});
+  };
 
 exports.income = asyncHandler(async(req, res)=>{
   const date = new Date();
