@@ -3,15 +3,13 @@ const asyncHandler = require('express-async-handler');
 const cloudinary = require('cloudinary');
 
 const {
-  // getById,
+  getById,
   updateById,
   deleteOne
 } = require('./operations');
 
 exports.deleteProduct       = deleteOne(Product);
-// exports.get_product_ById    = getById(Product);
 exports.update_product_ById = updateById(Product);
-
 
 exports.addProduct          = asyncHandler(async(req, res)=>{
   let product = await  Product.findOne({name : req.body.name});
@@ -42,7 +40,13 @@ exports.get_all_products    =  asyncHandler(async(req, res)=>{
 
 });
 
+exports.get_product_ById    =  asyncHandler(async(req, res)=>{
+  await Product.findById(req.params._id)
+              .populate('reviews')
+              .then((products)=>{res.json({count : products.length, products})})
+              .catch(err =>{res.status(500).json(err)})
 
+});
 // @desc create new review
 // @route POST api/product/:id/review
 exports.createProductReview = asyncHandler(async (req, res) => {
@@ -90,6 +94,6 @@ exports.filter = asyncHandler(async (req, res) => {
   ]
   });
   if(data.length == 0) return res.status(404).json({message: "Not found!"});
-  res.status(200).json(data);
-});
+  res.status(200).json({data});
 
+});
