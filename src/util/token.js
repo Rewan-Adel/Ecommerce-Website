@@ -8,7 +8,7 @@ const verifyToken = asyncHandler(async(req, res, nxt)=>{
    if(token){
     try{
        const decoded = jwt.verify(token , process.env.JWT_SECRET);
-       const user = User.findById(decoded?.id);
+       const user = await User.findById(decoded?.userId);
        req.user = user;
     //    console.log(req.user)
        nxt();

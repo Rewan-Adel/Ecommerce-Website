@@ -16,7 +16,7 @@ router.get("/search/category/:key",  controller.get_product_ByCategory);
 
 router.use(verifyToken);    
 
-router.patch("/:id/review",controller.createProductReview);
+router.post("/:id/review",controller.createProductReview);
 
 router.use(isAdmin);    
 
