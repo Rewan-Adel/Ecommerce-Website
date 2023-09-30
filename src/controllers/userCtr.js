@@ -1,5 +1,4 @@
-const User = require('../models/userModel')
-const validator = require("validator");
+const User = require('../models/userModel');
 const asyncHandler = require('express-async-handler');
 
 const {
@@ -46,4 +45,3 @@ exports.adminFalse  =  asyncHandler(async(req, res)=>{
       user
     });
 }); 
-// exports.blockUser = asyncHandler(async(req,res)=>{}
