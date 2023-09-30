@@ -42,7 +42,7 @@ exports.get_all_products    =  asyncHandler(async(req, res)=>{
 exports.get_product_ById    =  asyncHandler(async(req, res)=>{
   await Product.findById( req.params.id )
               .populate('reviews')
-              .then((product)=>{res.json({count : products.length, products})})
+              .then((product)=>{res.json(product)})
               .catch(err =>{res.status(500).json(err)})
 
 });
