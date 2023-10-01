@@ -74,7 +74,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
   user.resetToken = token;
   user.resetTokenExpires = Date.now()+(45 * 60 * 1000);
   await user.save();
-  let link  = `http://${req.headers.host}/api/user/reset-password/${user._id}/${token}`;
+  let link  = `http://${req.headers.host}/reset-password/${user._id}/${token}`;
    resetPassEmail(link, user.email, res);
 });
 
