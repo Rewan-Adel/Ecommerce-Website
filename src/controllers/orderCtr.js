@@ -1,6 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const Cart =  require('../models/cartModel');
 const Order =  require('../models/orderModel');
+const {Product} =  require('../models/productModel');
+
 const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_KEY);
 require('dotenv').config();
@@ -64,6 +66,8 @@ exports.addOrder = async(req, res) => {
       payment_status: "delivered",
     });
     await order.save();
+    const product = await Product.findById(cart.items.productId);
+    product.countInStock -= count;
     await Cart.deleteOne({_id:req.body.cartId})
     res.json({URL: session.url});
   };
