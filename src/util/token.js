@@ -10,7 +10,8 @@ const verifyToken = asyncHandler(async(req, res, nxt)=>{
        const decoded = jwt.verify(token , process.env.JWT_SECRET);
        const user = await User.findById(decoded?.userId);
        req.user = user;
-    //    console.log(req.user)
+       if(user.resetToken != null ) 
+       res.status(400).json({message:"You are not logged in! Please login for get access'"});
        nxt();
    }catch(err){
     res.status(403).send({

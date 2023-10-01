@@ -73,3 +73,9 @@ exports.wishlist =  asyncHandler(async(req, res)=>{
 
   }
 });
+
+exports.getWishlist =  asyncHandler(async(req, res)=>{
+  const {_id} = req.user;
+  const user = await User.findById(_id).populate('wishlist').exec();
+  return res.json(user);
+ });

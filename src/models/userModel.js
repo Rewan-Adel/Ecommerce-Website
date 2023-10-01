@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
     cart :   { type : mongoose.Schema.Types.ObjectId, ref: 'carts'},
     wishlist:
     [
-      { type : mongoose.Schema.Types.ObjectId, ref: 'products'}
+      { type : mongoose.Schema.Types.ObjectId, ref: 'Products'}
     ],
 
     resetToken: { type: String },

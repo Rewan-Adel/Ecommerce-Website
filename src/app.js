@@ -29,7 +29,7 @@ app.use(cors({
     credentials: true
 }));
 
-app.use("/api/user",    userRouter);
+app.use("/",    userRouter);
 app.use("/api/product", productsRouter);
 app.use("/api/order",   orderRouter);
 app.use("/api/cart",    cartRouter);

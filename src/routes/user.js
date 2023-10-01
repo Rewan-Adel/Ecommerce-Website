@@ -13,22 +13,21 @@ router
     .route("/reset-password/:id/:token")
     .patch(authController.resetPassword);
 
-    
-router.use(verifyToken);    
 router
-    .route("/:id")
-    // .patch(userController.updateOne)
+    .route("/user/:id", verifyToken)
+    .patch(userController.updateOne)
     .get(userController.getOne);
 
 
-router.patch('/wishlist', userController.wishlist);
+router.patch('/wishlist', verifyToken, userController.wishlist);
+router.get("/wishlist",   verifyToken, userController.getWishlist);
 
 // @des Admin operations
-router.use(isAdmin);    
+// router.use(isAdmin);    
 
-router.get("/",                  userController.getAllUsers);
-router.delete("/:id",            userController.DeleteOne);
-router.get("/search/:key",       userController.searchUser);
-router.patch("/:id/role?",       userController.role); 
+router.get("/",           verifyToken, isAdmin, userController.getAllUsers);
+router.delete("/:id",     verifyToken, isAdmin,  userController.DeleteOne);
+router.get("/search/:key",verifyToken, isAdmin,  userController.searchUser);
+router.patch("/:id/role?", verifyToken,isAdmin,  userController.role); 
 
 module.exports = router;
