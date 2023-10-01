@@ -45,7 +45,7 @@ exports.getAll = (Model) => asyncHandler(async (req, res) => {
 });
 
 exports.getById =  (Model) => asyncHandler(async (req, res) => {
-    let data = await Model.findById({ _id: req.params.id });
+    let data = await Model.findById( req.params.id );
       if (!data) {
         return res.status(404).json({
           message: "Not found!",

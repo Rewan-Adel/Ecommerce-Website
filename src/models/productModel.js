@@ -22,7 +22,9 @@ const ProductSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     countInStock: { type: Number, required: true, default : 0 },
     image: { type: String, default: "https://res.cloudinary.com/dt6idcgyw/image/upload/v1692522045/Default_pfp.svg_wvwrib.png", required:true},
-    reviews : {type : mongoose.Schema.Types.ObjectId, ref : "reviews"}
+    reviews : [
+      {type : mongoose.Schema.Types.ObjectId, ref : "reviews"}
+    ]
   },
   {
     timestamps: true,

@@ -24,8 +24,11 @@ const userSchema = new mongoose.Schema(
     street: { type: String },
     
     isAdmin: { type: Boolean, default: false },
-    cart : { type : mongoose.Schema.Types.ObjectId, ref: 'carts'},
-    wishlist : { type : mongoose.Schema.Types.ObjectId, ref: 'products'},
+    cart :   { type : mongoose.Schema.Types.ObjectId, ref: 'carts'},
+    wishlist:
+    [
+      { type : mongoose.Schema.Types.ObjectId, ref: 'products'}
+    ],
 
     resetToken: { type: String },
     resetTokenExpires:{type: Date} 

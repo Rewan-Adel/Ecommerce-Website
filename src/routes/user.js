@@ -17,18 +17,18 @@ router
 router.use(verifyToken);    
 router
     .route("/:id")
-    .patch(userController.updateOne)
+    // .patch(userController.updateOne)
     .get(userController.getOne);
 
 
-    
+router.patch('/wishlist', userController.wishlist);
+
 // @des Admin operations
 router.use(isAdmin);    
 
 router.get("/",                  userController.getAllUsers);
 router.delete("/:id",            userController.DeleteOne);
 router.get("/search/:key",       userController.searchUser);
-router.patch("/admin=true/:id",  userController.adminTrue); 
-router.patch("/admin=false/:id", userController.adminFalse);
+router.patch("/:id/role?",       userController.role); 
 
 module.exports = router;

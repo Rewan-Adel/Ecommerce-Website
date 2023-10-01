@@ -40,11 +40,10 @@ exports.get_all_products    =  asyncHandler(async(req, res)=>{
 });
 
 exports.get_product_ById    =  asyncHandler(async(req, res)=>{
-  await Product.findById( req.params.id )
-              .populate('reviews')
-              .then((product)=>{res.json(product)})
-              .catch(err =>{res.status(500).json(err)})
-
+  const product = await Product.findById( req.params.id).populate('reviews').exec();
+  
+  if( !product) return res.status(404).json({message:"product not found"});
+  return res.json(product);
 });
 // @desc create new review
 // @route POST api/product/:id/review
@@ -63,13 +62,6 @@ exports.createProductReview = asyncHandler(async (req, res) => {
         {new : true}
       );
         
-  //  await Product.findOne({_id:req.params.id}).populate("reviews")
-  //     .then( review =>{
-  //       res.status(200).json({
-  //         count   : review.length,
-  //         reviews :  review
-  //       });
-  //   });
     res.status(200).json({
       message: "added successfully",
       review

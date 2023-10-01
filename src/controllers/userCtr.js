@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const {Product} = require('../models/productModel');
 const asyncHandler = require('express-async-handler');
 
 const {
@@ -21,27 +22,54 @@ exports.searchUser = asyncHandler(async(req, res) =>{
 ]});
     if( data.length > 0) {res.send(data)}
     else
-      return res.status(404).json({"message": "not found!"});             
+      return res.status(404).json({"message": "User not found!"});             
   });
 
-exports.adminTrue  =  asyncHandler(async(req, res)=>{
-  let user = await User.findByIdAndUpdate({_id: req.params.id}, {isAdmin:true})
-    if(!user)
-      return res.status(404).json({'message': "user not found"});
-    await user.save();
-    return res.json({
-      message : `${user.firstName} ${user.lastName} is admin `,
+exports.role  =  asyncHandler(async(req, res)=>{
+  const query = req.query.admin;
+  const user  = await User.findById(req.params.id);
+
+  if(!user)
+    return res.status(404).json({'message': "user not found"});
+    let msg ;
+   if(query == "true"){
+    await user.updateOne({isAdmin : true});
+    msg  = `${user.firstName} ${user.lastName} is admin `;
+   }
+   else if(query == 'false'){
+    await user.updateOne({isAdmin : false})
+     msg = `${user.firstName} ${user.lastName} is user `;
+   };
+
+  await user.save();
+  return res.json({
+       message : msg,
       user
     });
 }); 
 
-exports.adminFalse  =  asyncHandler(async(req, res)=>{
-  let user = await User.findByIdAndUpdate({_id: req.params.id}, {isAdmin:false})
-    if(!user)
-      return res.status(404).json({'message': "user not found"});
-    await user.save();
-    return res.json({
-      message : `${user.firstName} ${user.lastName} is user `,
-      user
-    });
-}); 
+exports.wishlist =  asyncHandler(async(req, res)=>{
+ const {_id} = req.user;
+ const productId = req.body.productId;
+
+  const user = await User.findById(_id);
+  const alreadyAdded =  user.wishlist.find((id)=> id.toString() ==  req.body.productId);
+
+  if(alreadyAdded){
+    let user = await User.findByIdAndUpdate(_id,
+    { $pull : { wishlist : req.body.productId} },
+    { new   : true }
+    );
+  
+    return res.json({message: "removed from wishlist",user});
+
+  }
+  else {
+    let user = await  User.findByIdAndUpdate( _id,
+     { $push : { wishlist : req.body.productId} },
+     { new   : true }
+     );
+    return res.json({message: "Added to wishlist",user});
+
+  }
+});
