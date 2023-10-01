@@ -82,15 +82,12 @@ exports.resetPassword  = asyncHandler(async (req, res) =>{
  let user = await User.findOne({resetToken: req.params.token});
  if(!user)  return res.status(400).json({message: 'token has expired'});
  //if(user.resetTokenExpires > Date.now()) return res.status(400).json({message: 'link has expired'});
- 
- if(req.body.password != req.body.confirmPass) return res.status(400).json({message:"Password does not match"});
-
 
 //Setup new password
 user.password = req.body.password;
-user.confirmPassword = undefined;
 user.resetToken = undefined; 
 user.resetTokenExpires = undefined;
+
 await user.save();
 res.json({message:'password changed'});
 });
