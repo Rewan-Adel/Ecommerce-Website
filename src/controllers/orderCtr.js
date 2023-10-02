@@ -44,10 +44,11 @@ exports.addOrder = async(req, res) => {
           },
           unit_amount: item.price * 100,
         },
-        quantity: cart.totalPrice,
+      quantity:  cart.totalPrice,
+
       };
     });
-  
+
     //A Checkout Session is the programmatic representation of what your customer sees
     const session = await stripe.checkout.sessions.create({
       payment_method_types : ['card'],
@@ -57,17 +58,26 @@ exports.addOrder = async(req, res) => {
       success_url: `${process.env.CLIENT_URL}/api/order/${cart.userId}`,
       cancel_url : `${process.env.CLIENT_URL}/cancel`,
     });
-
+    console.log(cart.userId.toString()) 
     const order = new Order({
-      userId  :  cart.userId,
+      userId  :  cart.userId.toString(),
       products:  cart.items,
       amount  :  cart.amount ,
-      //address : { type: Object, required: true },
+      totalPrice:  cart.totalPrice,
       payment_status: "delivered",
     });
+    
+    //Increase the product from data base
+    const productId = cart.items?.map((item) => {return item.productId});
+    
+    for(let i=0; i < productId.length; i++){
+      const count     = cart.items?.map((item) => {return item.count});
+      const product = await Product.findById(productId[i]);
+      product.countInStock -=  count[i];
+      await product.save();
+    }
+
     await order.save();
-    const product = await Product.findById(cart.items.productId);
-    product.countInStock -= count;
     await Cart.deleteOne({_id:req.body.cartId})
     res.json({URL: session.url});
   };

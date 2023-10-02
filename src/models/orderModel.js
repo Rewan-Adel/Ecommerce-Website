@@ -6,18 +6,14 @@ const orderSchema = new mongoose.Schema({
       {productId: { type: mongoose.Schema.Types.ObjectId , ref : "Products"}},
       {quantity : { type: Number, default: 1,  required : true}}
     ],
-    amount: { type: Number, required: true },
-    //address: { type: Object, required: true },
+    amount     : { type: Number, required: true },
+    totalPrice : { type: Number, required: true },
     delivery_status: { type: String, default: "pending" },
-   payment_status: { type: String, required: true },
+    payment_status: { type: String, required: true },
   },
   {
     timestamps: true,
   }
 );
-
-// );
-
-
 
 module.exports = mongoose.model("orders", orderSchema);
