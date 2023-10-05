@@ -33,19 +33,20 @@ exports.role  =  asyncHandler(async(req, res)=>{
     return res.status(404).json({'message': "user not found"});
     let role = user.isAdmin;
     let msg;
+    let updated;
     if(role === false){
-      await user.updateOne({isAdmin : true});
+      updated = await User.findByIdAndUpdate(req.params.id, {isAdmin : true}, {new: true})
       msg  = `${user.firstName} ${user.lastName} is admin `;
     }
    else if(role === true){
-    await user.updateOne({isAdmin : false})
-     msg = `${user.firstName} ${user.lastName} is user `;
+    updated = await User.findByIdAndUpdate(req.params.id, {isAdmin : false}, {new: true})
+    msg = `${user.firstName} ${user.lastName} is user `;
    };
 
   await user.save();
   return res.json({
        message : msg,
-      user
+       updated
     });
 }); 
 
