@@ -26,17 +26,18 @@ exports.searchUser = asyncHandler(async(req, res) =>{
   });
 
 exports.role  =  asyncHandler(async(req, res)=>{
-  const query = req.query.admin;
+  // const query = req.query.admin;
   const user  = await User.findById(req.params.id);
 
   if(!user)
     return res.status(404).json({'message': "user not found"});
-    let msg ;
-   if(query == "true"){
-    await user.updateOne({isAdmin : true});
-    msg  = `${user.firstName} ${user.lastName} is admin `;
-   }
-   else if(query == 'false'){
+    let role = user.isAdmin;
+    let msg;
+    if(role === false){
+      await user.updateOne({isAdmin : true});
+      msg  = `${user.firstName} ${user.lastName} is admin `;
+    }
+   else if(role === true){
     await user.updateOne({isAdmin : false})
      msg = `${user.firstName} ${user.lastName} is user `;
    };
