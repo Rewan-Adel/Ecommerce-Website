@@ -74,7 +74,7 @@ exports.addOrder = async(req, res) => {
       await product.save();
     }
     await order.save();
-    //await Cart.deleteOne({_id:req.body.cartId})
+    await Cart.deleteOne({_id:req.body.cartId})
     res.json({URL: session.url});
   };
 
