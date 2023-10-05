@@ -28,7 +28,8 @@ exports.newCart = asyncHandler(async(req, res)=>{
       const product = await Product.findById(cart[i].productId);
       if(!product || product.countInStock == 0) 
         return res.status(404).json({message : `${product.name} is not  available`});
-      else if(cart[i].count > product.countInStock) 
+        
+      if(cart[i].count > product.countInStock) 
         return res.status(400).json({message : `${product.name} only exist ${product.countInStock} item`})
       
       obj.productId = cart[i].productId;              

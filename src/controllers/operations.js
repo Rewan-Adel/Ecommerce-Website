@@ -19,7 +19,7 @@ exports.updateById = (Model) => asyncHandler(async(req, res) => {
         });
       }
       
-    let updatedNew = await Model.findByIdAndUpdate(req.params.id, req.body);
+    let updatedNew = await Model.findByIdAndUpdate(req.params.id, req.body, {new:true});
     if(updatedNew) return res.status(200).json({message : "Updated Successfully", updatedNew});
     else res.status(500).json({message : "can't update data"});
 });

@@ -73,6 +73,12 @@ exports.createProductReview = asyncHandler(async (req, res) => {
     }
 });
 
+exports.getReviews = asyncHandler(async (req, res) => {
+  const reviews =  await Reviews.find().populate('userId')
+      .then((Reviews)=> res.json(Reviews))
+      .catch((err)=> res.json(err))
+});
+
 // @desc filtration
 // @route GET api/product/filter?name=&brand=&category=&price=
 exports.filter = asyncHandler(async (req, res) => {
@@ -88,3 +94,5 @@ exports.filter = asyncHandler(async (req, res) => {
   if(data.length == 0) return res.status(404).json({message: "Not found!"});
   res.status(200).json({data});
 });
+
+

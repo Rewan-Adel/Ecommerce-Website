@@ -3,9 +3,8 @@ const Cart =  require('../models/cartModel');
 const Order =  require('../models/orderModel');
 const {Product} =  require('../models/productModel');
 
-const Stripe = require('stripe');
-const stripe = Stripe(process.env.STRIPE_KEY);
 require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_KEY);
 
 const {
     getAll,
@@ -54,31 +53,28 @@ exports.addOrder = async(req, res) => {
       payment_method_types : ['card'],
       line_items: line_items,
       mode: 'payment',
-      customer: customer.id,
+   //   customer: customer.id,
       success_url: `${process.env.CLIENT_URL}/api/order/${cart.userId}`,
       cancel_url : `${process.env.CLIENT_URL}/cancel`,
     });
-    console.log(cart.userId.toString()) 
+    const {_id} = req.user;
     const order = new Order({
-      userId  :  cart.userId.toString(),
-      products:  cart.items,
-      amount  :  cart.amount ,
-      totalPrice:  cart.totalPrice,
+      userId  :   _id,
+      products:   cart.items,
+      amount  :   cart.amount ,
+      totalPrice: cart.totalPrice,
       payment_status: "delivered",
     });
     
-    //Increase the product from data base
     const productId = cart.items?.map((item) => {return item.productId});
-    
     for(let i=0; i < productId.length; i++){
-      const count     = cart.items?.map((item) => {return item.count});
+      const count   = cart.items?.map((item) => {return item.count});
       const product = await Product.findById(productId[i]);
-      product.countInStock -=  count[i];
+      product.countInStock =   product.countInStock  - count[i];
       await product.save();
     }
-
     await order.save();
-    await Cart.deleteOne({_id:req.body.cartId})
+    //await Cart.deleteOne({_id:req.body.cartId})
     res.json({URL: session.url});
   };
 
