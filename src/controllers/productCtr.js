@@ -1,11 +1,11 @@
 const {Product, Reviews } = require("../models/productModel");
 const asyncHandler = require('express-async-handler');
-const cloudinary = require('cloudinary');
-
+const cloudinary = require('../util/cloudinary');
 const {
   updateById,
   deleteOne
 } = require('./operations');
+require("dotenv").config();
 
 exports.deleteProduct       = deleteOne(Product);
 exports.update_product_ById = updateById(Product);
@@ -30,6 +30,7 @@ exports.addProduct          = asyncHandler(async(req, res)=>{
   await product.save();
   return res.status(200).json({message : "Successfully added", product});  
 });
+
 
 exports.get_all_products    =  asyncHandler(async(req, res)=>{
   await Product.find()
@@ -78,10 +79,10 @@ exports.filter = asyncHandler(async (req, res) => {
   let queryRegx = req.query;
   const data = await Product.find({
    $and: [
-    { name   : { $regex: queryRegx.name  }},
-    { price  : { $lte : queryRegx.price  }},
-    { brand  : { $regex: queryRegx.brand }},
-    { category:{ $regex: queryRegx.category }}
+    { name   : { $regex: queryRegx.name ,    $options: "i" }},
+    { brand  : { $regex: queryRegx.brand,    $options: "i" }},
+    { category:{ $regex: queryRegx.category ,$options: "i"}},
+    { price  : { $lte : queryRegx.price }}
   ]
   });
   if(data.length == 0) return res.status(404).json({message: "Not found!"});
