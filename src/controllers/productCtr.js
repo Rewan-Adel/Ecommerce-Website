@@ -34,14 +34,20 @@ exports.addProduct          = asyncHandler(async(req, res)=>{
 
 exports.get_all_products    =  asyncHandler(async(req, res)=>{
   await Product.find()
-               .populate('reviews')
+               .populate({
+                path:'reviews',
+                populate: { path: 'userId' }
+              })
                .then((products)=>{res.json({count : products.length, products})})
                .catch(err =>{res.status(500).json(err)})
 
 });
 
 exports.get_product_ById    =  asyncHandler(async(req, res)=>{
-  const product = await Product.findById( req.params.id).populate('reviews').exec();
+  const product = await Product.findById( req.params.id).populate({
+    path : 'reviews',
+    populate : {path : 'userId'}
+  }).exec();
   
   if( !product) return res.status(404).json({message:"product not found"});
   return res.json(product);
